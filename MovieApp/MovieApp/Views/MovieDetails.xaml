@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:controls="clr-namespace:MovieApp.Graphics"
+             xmlns:m="clr-namespace:MovieApp.Models"
+             x:Class="MovieApp.Views.MovieDetails"
+             Title="MovieDetails">
+    <ContentPage.Resources>
+        <controls:CircularRatingControl x:Key="CircularRatingControl"/>
+    </ContentPage.Resources>
+    
+    <Grid
+        Margin="15"
+        ColumnDefinitions=".1*,*,.1*,*,*"
+        RowDefinitions=".1*,*,.1*">
+
+        <Grid
+            Grid.Column="1" Grid.Row="1"
+            RowDefinitions="Auto,Auto">
+            <Border 
+                Grid.Row="0"
+                StrokeShape="RoundRectangle 15,15,0,0"
+                StrokeThickness="0"
+                WidthRequest="300" HeightRequest="450"
+                VerticalOptions="Start">
+                <Image
+                    Source="{Binding Movie.PosterPath}" Aspect="AspectFill"/>
+            </Border>
+            <Border
+                Grid.Row="1"
+                StrokeShape="RoundRectangle 0,0,15,15"
+                StrokeThickness="0"
+                WidthRequest="300" HeightRequest="60"
+                Background="{StaticResource Gray600Brush}">
+                <HorizontalStackLayout
+                    HorizontalOptions="Center"
+                    Spacing="10">
+                    <Border
+                        StrokeShape="RoundRectangle 5" WidthRequest="24" HeightRequest="24" StrokeThickness="0">
+                        <Image Source="play_circle_icon.png" Aspect="AspectFit"/>
+                    </Border>
+                    <Label Text="Ver trailer" FontAttributes="Bold" VerticalTextAlignment="Center">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroupList>
+                                <VisualStateGroup Name="CommonStates">
+                                    <VisualState Name="Normal"/>
+                                    <VisualState Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Property="TextColor" Value="LightBlue" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateGroupList>
+                        </VisualStateManager.VisualStateGroups>
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ShowPopupTrailerCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
+            </Border>
+        </Grid>
+        
+        <!--Details-->
+        <Grid
+            Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2">
+            <VerticalStackLayout Spacing="20">
+                <!--Title and Release Year Date-->
+                <HorizontalStackLayout
+                    Spacing="15">
+                    <Label Text="{Binding Movie.Title}" FontSize="22" FontAttributes="Bold" VerticalTextAlignment="Center"/>
+                    <Label Text="{Binding Movie.ReleaseDate, StringFormat='({0:yyyy})'}" FontSize="16" TextColor="Gray" VerticalTextAlignment="Center"/>
+                </HorizontalStackLayout>
+
+                <!--Info [Full Release Date,Language,Genres,Duration]-->
+                <HorizontalStackLayout
+                    Spacing="10">
+                    <HorizontalStackLayout>
+                        <Label Text="{Binding Movie.ReleaseDate}" FontSize="16" TextColor="Gray" VerticalTextAlignment="Center"/>
+                        <Label Text="{Binding Movie.OriginalLanguage, StringFormat='({0:})'}" TextTransform="Uppercase" FontSize="16" TextColor="Gray" VerticalTextAlignment="Center"/>
+                    </HorizontalStackLayout>
+
+                    <Label Text="&#xe061;" FontFamily="MaterialIconSemibold" FontSize="8" VerticalTextAlignment="Center"/>
+
+                    <CollectionView
+                        ItemsSource="{Binding Genres}"
+                        SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="m:Genre">
+                                <Label Text="{Binding Name}"  FontSize="16" TextColor="Gray" VerticalTextAlignment="Center"/>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="5"/>
+                        </CollectionView.ItemsLayout>
+                    </CollectionView>
+
+                    <Label Text="&#xe061;" FontFamily="MaterialIconSemibold" FontSize="8" VerticalTextAlignment="Center"/>
+
+                    <Label Text="1h 30min" FontSize="16" TextColor="Gray" VerticalTextAlignment="Center"/>
+
+                </HorizontalStackLayout>
+                
+                <!--Vote Rate-->
+                <HorizontalStackLayout Spacing="15">
+                    <controls:CircularRatingControl Rating="{Binding Movie.VoteAverage}" 
+                                        WidthRequest="60" 
+                                        HeightRequest="60" />
+                    <Label Text="Puntuación de los usuarios" FontSize="16" VerticalTextAlignment="Center"/>
+                </HorizontalStackLayout>
+
+                <!--Overview-->
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Vista General" FontSize="20"/>
+                    <Label Text="{Binding Movie.Overview}" FontSize="16"/>
+                </VerticalStackLayout>
+
+                <!--Buttons-->
+                <HorizontalStackLayout Spacing="15">
+                    <Button Text="&#xe87d;" FontFamily="MaterialIconSemibold" CornerRadius="25"/>
+                    <Button Text="&#xe866;" FontFamily="MaterialIconSemibold" CornerRadius="25"/>
+                    <Button Text="&#xe241;" FontFamily="MaterialIconSemibold" CornerRadius="25"/>
+                </HorizontalStackLayout>
+
+                <!--Where to see-->
+                <VerticalStackLayout
+                    Spacing="15">
+                    <Label Text="Donde Ver" FontSize="20"/>
+                    <CollectionView
+                        ItemsSource="{Binding Platforms}"
+                        SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="m:StreamingPlatform">
+                                <Border
+                                    StrokeShape="RoundRectangle 5" WidthRequest="36" HeightRequest="36" StrokeThickness="0"
+                                    ToolTipProperties.Text="{Binding Name}">
+                                    <Image Source="{Binding ImagePath}" Aspect="AspectFit"/>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="5"/>
+                        </CollectionView.ItemsLayout>
+
+                    </CollectionView>
+                </VerticalStackLayout>
+                
+            </VerticalStackLayout>
+        </Grid>
+
+
+
+
+    </Grid>
+
+
+    
+</ContentPage>
